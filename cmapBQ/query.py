@@ -217,7 +217,7 @@ def cmap_genes(client,
                ensembl_id=None,
                gene_title = None,
                gene_type=None,
-               feature_space="landmark",
+               feature_space="aig",
                src=None,
                table=None,
                verbose=False):
@@ -241,7 +241,7 @@ def cmap_genes(client,
 
                 aig: All inferred genes including 12,328 genes
 
-                Default is landmark.
+                Default is aig.
     :param src: list of gene sources
     :param table: table to query. This by default points to the siginfo table and normally should not be changed.
     :param verbose: Print query and table address.
