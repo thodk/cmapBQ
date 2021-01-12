@@ -321,7 +321,7 @@ def cmap_sig(
     """
 
     priority_fields = ['sig_id', 'pert_id',
-              'cmap_name', 'pert_type', 'cell_iname',
+              'cmap_name', 'pert_type', 'cell_iname', 'pert_itime',
               'pert_idose', 'nsample', 'det_plates', 'build_name', 'project_code',
               'ss_ngene', 'cc_q75',
               'tas']
@@ -416,7 +416,7 @@ def cmap_profiles(
         table = config.tables.instinfo
 
     priority_fields = ['sample_id', 'det_plate', 'pert_id',
-                  'cmap_name', 'pert_type', 'cell_iname',
+                  'cmap_name', 'pert_type', 'cell_iname', 'pert_itime',
                   'pert_idose', 'det_plate', 'build_name', 'project_code']
 
     if return_fields == 'priority':
