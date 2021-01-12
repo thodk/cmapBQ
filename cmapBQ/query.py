@@ -217,7 +217,7 @@ def cmap_genes(client,
                ensembl_id=None,
                gene_title = None,
                gene_type=None,
-               feature_space="landmark",
+               feature_space="aig",
                src=None,
                table=None,
                verbose=False):
@@ -241,7 +241,7 @@ def cmap_genes(client,
 
                 aig: All inferred genes including 12,328 genes
 
-                Default is landmark.
+                Default is aig.
     :param src: list of gene sources
     :param table: table to query. This by default points to the siginfo table and normally should not be changed.
     :param verbose: Print query and table address.
@@ -291,11 +291,14 @@ def cmap_sig(
     client,
     sig_id=None,
     pert_id=None,
+    pert_itime=None,
+    pert_idose=None,
     pert_type=None,
     cmap_name=None,
     cell_iname=None,
     det_plates=None,
     build_name=None,
+    project_code=None,
     return_fields='priority',
     limit=None,
     table=None,
@@ -307,12 +310,15 @@ def cmap_sig(
     :param client: Bigquery Client
     :param sig_id: list of sig_ids
     :param pert_id: list of pert_ids
+    :param pert_itime: list of timepoints
+    :param pert_idose: list of doses
     :param pert_type: list of pert_types. Avoid using only this parameter as the return could be very large.
     :param cmap_name: list of cmap_name, formerly pert_iname
     :param cell_iname: list of cell names
     :param det_plates: list of det_plates. det_plates values are the concatenation of values from
     instinfo det_plate field with the '|' delimiter used.
     :param build_name: list of builds
+    :param project_code: list of project_codes
     :param return_fields: ['priority', 'all']
     :param limit: Maximum number of rows to return
     :param table: table to query. This by default points to the level 5 siginfo table and normally should not be changed.
@@ -321,7 +327,7 @@ def cmap_sig(
     """
 
     priority_fields = ['sig_id', 'pert_id',
-              'cmap_name', 'pert_type', 'cell_iname',
+              'cmap_name', 'pert_type', 'cell_iname', 'pert_itime',
               'pert_idose', 'nsample', 'det_plates', 'build_name', 'project_code',
               'ss_ngene', 'cc_q75',
               'tas']
@@ -344,6 +350,12 @@ def cmap_sig(
     if pert_id:
         pert_id = parse_condition(pert_id)
         CONDITIONS.append("pert_id in UNNEST({})".format(list(pert_id)))
+    if pert_itime:
+        pert_itime = parse_condition(pert_itime)
+        CONDITIONS.append("pert_itime in UNNEST({})".format(list(pert_itime)))
+    if pert_idose:
+        pert_idose = parse_condition(pert_idose)
+        CONDITIONS.append("pert_idose in UNNEST({})".format(list(pert_idose)))
     if pert_type:
         pert_type = parse_condition(pert_type)
         CONDITIONS.append("pert_type in UNNEST({})".format(list(pert_type)))
@@ -362,6 +374,9 @@ def cmap_sig(
     if build_name:
         build_name = parse_condition(build_name)
         CONDITIONS.append("build_name in UNNEST({})".format(list(build_name)))
+    if project_code:
+        project_code = parse_condition(project_code)
+        CONDITIONS.append("project_code in UNNEST({})".format(list(project_code)))
 
     if CONDITIONS:
         WHERE = "WHERE " + " AND ".join(CONDITIONS)
@@ -384,11 +399,14 @@ def cmap_profiles(
     client,
     sample_id=None,
     pert_id=None,
+    pert_itime=None,
+    pert_idose=None,
     pert_type=None,
     cmap_name=None,
     cell_iname=None,
     det_plate=None,
     build_name=None,
+    project_code=None,
     return_fields='priority',
     limit=None,
     table=None,
@@ -401,10 +419,13 @@ def cmap_profiles(
     :param client: Bigquery client
     :param sample_id: list of sample_ids
     :param pert_id: list of pert_ids
+    :param pert_itime: list of timepoints
+    :param pert_idose: list of doses
     :param pert_type: list of pert_types. Avoid using only this parameter as the return could be very large.
     :param cmap_name: list of cmap_names
     :param det_plate: list of det_plates
     :param build_name: list of builds
+    :param project_code: list of project_codes
     :param return_fields: ['priority', 'all']
     :param limit: Maximum number of rows to return
     :param table: table to query. This by default points to the siginfo table and normally should not be changed.
@@ -416,7 +437,7 @@ def cmap_profiles(
         table = config.tables.instinfo
 
     priority_fields = ['sample_id', 'det_plate', 'pert_id',
-                  'cmap_name', 'pert_type', 'cell_iname',
+                  'cmap_name', 'pert_type', 'cell_iname', 'pert_itime',
                   'pert_idose', 'det_plate', 'build_name', 'project_code']
 
     if return_fields == 'priority':
@@ -434,6 +455,12 @@ def cmap_profiles(
     if pert_id:
         pert_id = parse_condition(pert_id)
         CONDITIONS.append("pert_id in UNNEST({})".format(list(pert_id)))
+    if pert_itime:
+        pert_itime = parse_condition(pert_itime)
+        CONDITIONS.append("pert_itime in UNNEST({})".format(list(pert_itime)))
+    if pert_idose:
+        pert_idose = parse_condition(pert_idose)
+        CONDITIONS.append("pert_idose in UNNEST({})".format(list(pert_idose)))
     if pert_type:
         pert_type = parse_condition(pert_type)
         CONDITIONS.append("pert_type in UNNEST({})".format(list(pert_type)))
@@ -452,6 +479,9 @@ def cmap_profiles(
     if build_name:
         build_name = parse_condition(build_name)
         CONDITIONS.append("build_name in UNNEST({})".format(list(build_name)))
+    if project_code:
+        project_code = parse_condition(project_code)
+        CONDITIONS.append("project_code in UNNEST({})".format(list(project_code)))
 
     if CONDITIONS:
         WHERE = "WHERE " + " AND ".join(CONDITIONS)
